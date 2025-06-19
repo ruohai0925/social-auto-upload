@@ -119,6 +119,11 @@ class KSVideo(object):
             await new_feature_button.click()
 
         kuaishou_logger.info("正在填充标题和话题...")
+        # 尝试点击"跳过"或"关闭"按钮
+        skip_button = page.locator('button:has-text("跳过")')
+        if await skip_button.count():
+            await skip_button.click()
+        # 然后再点击"描述"
         await page.get_by_text("描述").locator("xpath=following-sibling::div").click()
         kuaishou_logger.info("clear existing title")
         await page.keyboard.press("Backspace")

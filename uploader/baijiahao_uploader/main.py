@@ -28,7 +28,7 @@ async def baijiahao_cookie_gen(account_file):
         context = await set_init_script(context)
         # Pause the page, and start recording manually.
         page = await context.new_page()
-        await page.goto("https://baijiahao.baidu.com/builder/theme/bjh/login")
+        await page.goto("https://baijiahao.baidu.com/builder/theme/bjh/login", timeout=120000)
         await page.pause()
         # 点击调试器的继续，保存cookie
         await context.storage_state(path=account_file)
@@ -43,7 +43,7 @@ async def cookie_auth(account_file):
         # 创建一个新的页面
         page = await context.new_page()
         # 访问指定的 URL
-        await page.goto("https://baijiahao.baidu.com/builder/rc/home")
+        await page.goto("https://baijiahao.baidu.com/builder/rc/home", timeout=120000)
         await page.wait_for_timeout(timeout=5000)
 
         if await page.get_by_text('注册/登录百家号').count():
@@ -128,24 +128,17 @@ class BaiJiaHaoVideo(object):
         # 创建一个新的页面
         page = await context.new_page()
         # 访问指定的 URL
-        await page.goto("https://baijiahao.baidu.com/builder/rc/edit?type=videoV2", timeout=60000)
+        await page.goto("https://baijiahao.baidu.com/builder/rc/edit?type=videoV2", timeout=120000)
         baijiahao_logger.info(f"正在上传-------{self.title}.mp4")
         # 等待页面跳转到指定的 URL，没进入，则自动等待到超时
         baijiahao_logger.info('正在打开主页...')
-        await page.wait_for_url("https://baijiahao.baidu.com/builder/rc/edit?type=videoV2", timeout=60000)
+        await page.wait_for_selector("div[class*='video-main-container']", timeout=120000)
 
-        # 点击 "上传视频" 按钮
-        await page.locator("div[class^='video-main-container'] input").set_input_files(self.file_path)
-
-        # 等待页面跳转到指定的 URL
-        while True:
-            # 判断是是否进入视频发布页面，没进入，则自动等待到超时
-            try:
-                await page.wait_for_selector("div#formMain:visible")
-                break
-            except:
-                baijiahao_logger.info("正在等待进入视频发布页面...")
-                await asyncio.sleep(0.1)
+        # 滚动页面，触发懒加载
+        await page.mouse.wheel(0, 500)
+        await asyncio.sleep(2)
+        # 等待上传按钮出现
+        await page.wait_for_selector("input[type='file']", timeout=120000)
 
         # 填充标题和话题
         # 这里为了避免页面变化，故使用相对位置定位：作品标题父级右侧第一个元素的input子元素
@@ -173,7 +166,7 @@ class BaiJiaHaoVideo(object):
         if await page.locator('div.passMod_dialog-container >> text=百度安全验证:visible').count():
             baijiahao_logger.error("出现验证，退出")
             raise Exception("出现验证，退出")
-        await page.wait_for_url("https://baijiahao.baidu.com/builder/rc/clue**", timeout=5000)
+        await page.wait_for_url("https://baijiahao.baidu.com/builder/rc/clue**", timeout=120000)
         baijiahao_logger.success("视频发布成功")
 
         await context.storage_state(path=self.account_file)  # 保存cookie
@@ -265,10 +258,10 @@ class BaiJiaHaoVideo(object):
         # 创建一个新的页面
         page = await context.new_page()
         # 访问指定的 URL
-        await page.goto("https://aigc.baidu.com/make", timeout=60000)
+        await page.goto("https://aigc.baidu.com/make", timeout=120000)
         # 等待页面跳转到指定的 URL，没进入，则自动等待到超时
         baijiahao_logger.info('正在打开主页...')
-        await page.wait_for_url("https://aigc.baidu.com/make", timeout=60000)
+        await page.wait_for_url("https://aigc.baidu.com/make", timeout=120000)
 
         # 点击"全网"标签
         await page.locator('div.rounded-lg.border:has-text("全网")').click()

@@ -165,14 +165,14 @@ class XiaoHongShuVideo(object):
         xiaohongshu_logger.info(f'  [-] 正在填充标题和话题...')
         title_container = page.locator('div.input.titleInput').locator('input.d-text')
         if await title_container.count():
-            await title_container.fill(self.title[:30])
+            await title_container.fill(self.title[:20])
         else:
             titlecontainer = page.locator(".notranslate")
             await titlecontainer.click()
             await page.keyboard.press("Backspace")
             await page.keyboard.press("Control+KeyA")
             await page.keyboard.press("Delete")
-            await page.keyboard.type(self.title)
+            await page.keyboard.type(self.title[:20])
             await page.keyboard.press("Enter")
         css_selector = ".ql-editor" # 不能加上 .ql-blank 属性，这样只能获取第一次非空状态
         for index, tag in enumerate(self.tags, start=1):

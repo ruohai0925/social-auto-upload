@@ -18,7 +18,10 @@ async def cookie_auth(account_file):
         # 创建一个新的页面
         page = await context.new_page()
         # 访问指定的 URL
-        await page.goto("https://creator.douyin.com/creator-micro/content/upload")
+        print("before goto")
+        await page.goto("https://creator.douyin.com/creator-micro/content/upload", timeout=60000)
+        print("after goto, current url:", page.url)
+        await page.screenshot(path="goto_debug.png")
         try:
             await page.wait_for_url("https://creator.douyin.com/creator-micro/content/upload", timeout=5000)
         except:
@@ -107,7 +110,10 @@ class DouYinVideo(object):
         # 创建一个新的页面
         page = await context.new_page()
         # 访问指定的 URL
-        await page.goto("https://creator.douyin.com/creator-micro/content/upload")
+        print("before goto")
+        await page.goto("https://creator.douyin.com/creator-micro/content/upload", timeout=60000)
+        print("after goto, current url:", page.url)
+        await page.screenshot(path="goto_debug.png")
         douyin_logger.info(f'[+]正在上传-------{self.title}.mp4')
         # 等待页面跳转到指定的 URL，没进入，则自动等待到超时
         douyin_logger.info(f'[-] 正在打开主页...')
