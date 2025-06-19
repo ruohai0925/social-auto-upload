@@ -1,0 +1,10 @@
+运行prepare_video.py，直接把视频拷贝到videos文件夹下，它调用run_all.sh，接着检查cookie和上传视频到各个平台。
+
+# example文件夹下的文件没有使用
+
+
+
+
+
+
+
